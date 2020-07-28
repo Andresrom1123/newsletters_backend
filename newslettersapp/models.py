@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+from newsletters import settings
 from tags.models import Tag
 
 
@@ -16,3 +17,8 @@ class Newsletter(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class NewslettersUser(models.Model):
+    newsletter = models.ManyToManyField(Newsletter, related_name='newsletter_user')
+    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='user_newsletter')
