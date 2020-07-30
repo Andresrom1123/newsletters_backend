@@ -24,7 +24,7 @@ SECRET_KEY = 'ps_om4cenzy#tej#^*jzoawhao0!3atv^y+i(=r1z@iix4t--4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['newsletters-app.herokuapp.com']
 
 # Application definition
 
