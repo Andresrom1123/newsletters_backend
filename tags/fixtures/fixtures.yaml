@@ -1,0 +1,25 @@
+- model: tags.tag
+  pk: 1
+  fields:
+    name: Technology
+    slug: technology
+- model: tags.tag
+  pk: 2
+  fields:
+    name: Business
+    slug: business
+- model: tags.tag
+  pk: 3
+  fields:
+    name: Politics
+    slug: politics
+- model: tags.tag
+  pk: 4
+  fields:
+    name: Entertainment
+    slug: entertainment
+- model: tags.tag
+  pk: 5
+  fields:
+    name: Sports
+    slug: sports
