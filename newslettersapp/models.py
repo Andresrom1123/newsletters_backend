@@ -1,8 +1,8 @@
 from django.db import models
 from django.utils import timezone
 
-from newsletters import settings
 from tags.models import Tag
+from users.models import CustomUser
 
 
 class Newsletter(models.Model):
@@ -21,4 +21,4 @@ class Newsletter(models.Model):
 
 class NewslettersUser(models.Model):
     newsletter = models.ManyToManyField(Newsletter, related_name='newsletter_user')
-    user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='user_newsletter')
+    user = models.ManyToManyField(CustomUser, related_name='user_newsletter')
