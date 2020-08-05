@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
 from django.contrib.auth.models import AbstractUser, User
@@ -22,6 +24,8 @@ class UserForm(BaseUserManager):
             password=password
         )
         user.is_admin = True
+        user.is_active = True
+        user.is_staff = True
         user.save(using=self.db)
         return user
 
@@ -30,7 +34,8 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True, max_length=60)
     username = models.CharField(null=True, max_length=30)
     is_admin = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
+    token = models.UUIDField(default=uuid.uuid4)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -45,3 +50,7 @@ class CustomUser(AbstractUser):
 
     def has_module_perms(self, app_label):
         return True
+
+    def reset_token(self):
+        self.token = uuid.uuid4()
+        self.save()
