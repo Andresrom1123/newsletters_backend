@@ -34,6 +34,7 @@ class Base(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
+        'corsheaders',
         'rest_framework_swagger',
         'rest_framework',
         'django.contrib.admin',
@@ -48,6 +49,8 @@ class Base(Configuration):
     ]
 
     MIDDLEWARE = [
+        'corsheaders.middleware.CorsMiddleware',
+        'django.middleware.common.CommonMiddleware',
         'django.middleware.security.SecurityMiddleware',
         'django.contrib.sessions.middleware.SessionMiddleware',
         'django.middleware.common.CommonMiddleware',
@@ -142,5 +145,10 @@ class Base(Configuration):
             'rest_framework.permissions.IsAuthenticated',
         ]
     }
+
+    CORS_ORIGIN_WHITELIST = [
+        'http://localhost:3000',
+        'https://awesome-visvesvaraya-2565c3.netlify.app'
+    ]
 
     django_heroku.settings(locals())
