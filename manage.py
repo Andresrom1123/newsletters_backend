@@ -7,6 +7,7 @@ import sys
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'newsletters.settings.dev')
     os.environ.setdefault('DJANGO_CONFIGURATION', 'Dev')
+    os.environ.setdefault('SENDGRID_KEY', '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')
     try:
         from configurations.management import execute_from_command_line
     except ImportError as exc:
