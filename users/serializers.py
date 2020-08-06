@@ -19,7 +19,7 @@ class UserSerializer(serializers.ModelSerializer):
         rendered = render_to_string('email.html', {'user': user})
         message = Mail(
             from_email='newsletters@gmail.com',
-            to_emails='amclres@gmail.com',
+            to_emails=user.email,
             subject='E-mail Confirmation',
             html_content=rendered)
         try:
