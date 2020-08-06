@@ -146,9 +146,6 @@ class Base(Configuration):
         ]
     }
 
-    CORS_ORIGIN_WHITELIST = [
-        'http://localhost:3000',
-        'https://awesome-visvesvaraya-2565c3.netlify.app'
-    ]
+    CORS_ORIGIN_ALLOW_ALL = True
 
     django_heroku.settings(locals())
