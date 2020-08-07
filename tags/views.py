@@ -1,5 +1,9 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
+from newslettersapp.models import Newsletter
+from newslettersapp.serializers import NewsletterSerializer
 from tags.models import Tag
 from tags.serializers import TagSerializer
 
@@ -19,3 +23,14 @@ class TagViewSet(viewsets.ModelViewSet):
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    lookup_field = 'slug'
+
+    @action(detail=True, methods=['GET'])
+    def newsletters(self, request, slug=None):
+        """
+            Regresa los boletines de un tag por el slug
+        """
+        tags = self.get_object()  # Regresa un tag en particular por el slug
+        newsletters = Newsletter.objects.filter(tag__slug=tags.slug)  # filtramos los boletines por el tag__slug
+        serialized = NewsletterSerializer(newsletters, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)

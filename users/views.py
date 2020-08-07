@@ -5,6 +5,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
+from newslettersapp.serializers import NewsletterSerializer
 from users.models import CustomUser
 from users.serializers import UserSerializer
 
@@ -26,8 +27,9 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        permissions = [IsAuthenticated]
-        if self.request.user is not IsAuthenticated and self.request.method == 'POST':  # Si el usuario no esta autenticando y el método es un post
+        permissions = [AllowAny]
+        if self.request.user is not IsAuthenticated and self.request.method == 'POST':
+            # Si el usuario no esta autenticando y el método es un post
             permissions = [AllowAny]  # Los permisos estarán abiertos
         return [permission() for permission in permissions]
 
@@ -38,6 +40,13 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         users = self.get_queryset().filter(is_active=False)
         serialized = UserSerializer(users, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)
+
+    @action(detail=True, methods=['GET'])
+    def newsletters(self, request, pk=None):
+        user = self.get_object()
+        newsletter = user.user_newsletter.all()
+        serialized = NewsletterSerializer(newsletter, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
 

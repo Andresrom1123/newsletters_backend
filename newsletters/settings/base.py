@@ -29,7 +29,7 @@ class Base(Configuration):
     # SECURITY WARNING: don't run with debug turned on in production!
     DEBUG = True
 
-    ALLOWED_HOSTS = ['newsletters-app.herokuapp.com']
+    ALLOWED_HOSTS = []
 
     # Application definition
 
@@ -142,10 +142,8 @@ class Base(Configuration):
             'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
         'DEFAULT_PERMISSION_CLASSES': [
-            'rest_framework.permissions.IsAuthenticated',
+            'rest_framework.permissions.AllowAny',
         ]
     }
-
-    CORS_ORIGIN_ALLOW_ALL = True
 
     django_heroku.settings(locals())
