@@ -30,7 +30,7 @@ class TagViewSet(viewsets.ModelViewSet):
         """
             Regresa los boletines de un tag por el slug
         """
-        tags = self.get_object()  # Regresa un tag en particular por el slug
+        tags = Tag.objects.get(slug=slug)  # Regresa un tag en particular por el slug
         newsletters = Newsletter.objects.filter(tag__slug=tags.slug)  # filtramos los boletines por el tag__slug
         serialized = NewsletterSerializer(newsletters, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)

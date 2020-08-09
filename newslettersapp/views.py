@@ -1,5 +1,6 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from newslettersapp.models import Newsletter
@@ -30,28 +31,53 @@ class NewsletterViewSet(viewsets.ModelViewSet):
         else:
             return NewsletterSerializer
 
+    def get_permissions(self):
+        permissions = [IsAuthenticated]
+        if self.request.user is not IsAuthenticated and self.request.method == 'GET':
+            permissions = [AllowAny]
+        return [permission() for permission in permissions]
+
     @action(detail=True, methods=['POST'])
-    def action(self, request, pk=None):
+    def subscribed(self, request, pk=None):
         """
-            Agrega un boletin a un usuario
+            Agrega al usuario el boletin que se ha subscribido
         """
         newsletter = Newsletter.objects.get(id=pk)
         user_id = request.data.get('user')
-        user_1 = CustomUser.objects.get(id=user_id)
-        if newsletter.user.filter(id=user_1.id).exists():
-            newsletter.user.remove(user_1)
-            if newsletter.vote:
-                newsletter.vote = False
-                newsletter.target -= 1
-            elif newsletter.subscribed:
-                newsletter.subscribed = False
-        else:
-            newsletter.user.add(user_1)
-            if newsletter.target <= newsletter.meta and not newsletter.vote:
-                newsletter.target += 1
-                newsletter.vote = True
-            elif newsletter.target > newsletter.meta and not newsletter.subscribed:
-                newsletter.subscribed = True
-
+        user = CustomUser.objects.get(id=user_id)
+        if not newsletter.subscribed.filter(id=user.id).exists() and newsletter.subscribe == newsletter.target:
+            newsletter.subscribed.add(user)
+        elif newsletter.subscribed.filter(id=user.id).exists():
+            newsletter.subscribed.remove(user)
         newsletter.save()
         return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['POST'])
+    def vote(self, request, pk=None):
+        """
+            Manda el usuario que ha votado por un boletin
+        """
+        newsletter = Newsletter.objects.get(id=pk)
+        user_id = request.data.get('user')
+        user = CustomUser.objects.get(id=user_id)
+        if not newsletter.vote.filter(id=user.id).exists() and newsletter.subscribe < newsletter.target:
+            newsletter.subscribe += 1
+            newsletter.vote.add(user)
+        elif newsletter.vote.filter(id=user.id).exists():
+            newsletter.vote.remove(user)
+            if not newsletter.subscribe == newsletter.target:
+                newsletter.subscribe -= 1
+        newsletter.save()
+        return Response(status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['GET'])
+    def vote_get(self, request):
+        """
+        Regresa los boletines que se pueden votar
+        """
+        newsletters = Newsletter.objects.all()
+        newsletter_vote = None
+        for newsletter in newsletters:
+            newsletter_vote = self.get_queryset().filter(subscribe__lt=newsletter.target)
+        serialized = NewsletterSerializer(newsletter_vote, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)

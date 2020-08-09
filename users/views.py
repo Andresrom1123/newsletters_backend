@@ -27,14 +27,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        permissions = [AllowAny]
+        permissions = [IsAuthenticated]
         if self.request.user is not IsAuthenticated and self.request.method == 'POST':
             # Si el usuario no esta autenticando y el método es un post
             permissions = [AllowAny]  # Los permisos estarán abiertos
         return [permission() for permission in permissions]
 
-    @action(detail=False)  # users/is_active
-    def is_active(self, request):
+    def is_active(self, request):  # user/is_active
         """
             Regresa los usuarios inactivos
         """
@@ -43,10 +42,33 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
     @action(detail=True, methods=['GET'])
-    def newsletters(self, request, pk=None):
-        user = self.get_object()
-        newsletter = user.user_newsletter.all()
+    def vote(self, request, pk=None):
+        """
+        Regresa los boletines que ha votado un usuario
+        """
+        user = CustomUser.objects.get(id=pk)
+        newsletter = user.user_newsletter_vote.all()
         serialized = NewsletterSerializer(newsletter, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)
+
+    @action(detail=True, methods=['GET'])
+    def subscribed(self, request, pk=None):
+        """
+        Regresa los boletines que se ha subscribido un usuario
+        """
+        user = CustomUser.objects.get(id=pk)
+        newsletter = user.user_newsletter_subscribed.all()
+        serialized = NewsletterSerializer(newsletter, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)
+
+    @action(detail=True, methods=['GET'])
+    def author(self, request, pk=None):
+        """
+        Regresa los boletines de un author
+        """
+        user = CustomUser.objects.get(id=pk)
+        author = user.author_newsletter.all()
+        serialized = NewsletterSerializer(author, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
 
