@@ -19,8 +19,14 @@ class TestTagViewSet(APITestCase):
             name='Python2', description='123', image='123', target=1, frequency='Dy', tag=self.tag,
             created_at=timezone.now(), author=self.user)
 
-    def test_newsletters_action(self):
-        url = f'{self.url_base}/tags/{self.tag.slug}/newsletters/'
+    def test_newsletters_vote_action(self):
+        url = f'{self.url_base}/tags/{self.tag.slug}/newsletters_vote/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
+
+    def test_newsletters_subscribed_action(self):
+        url = f'{self.url_base}/tags/{self.tag.slug}/newsletters_subscribed/'
+        print(url)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)

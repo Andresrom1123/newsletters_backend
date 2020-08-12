@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
+from django.db.models import F
 
 from newslettersapp.models import Newsletter
 from newslettersapp.serializers import NewsletterSerializer, CreateNewsletterSerializer
@@ -75,9 +76,15 @@ class NewsletterViewSet(viewsets.ModelViewSet):
         """
         Regresa los boletines que se pueden votar
         """
-        newsletters = Newsletter.objects.all()
-        newsletter_vote = None
-        for newsletter in newsletters:
-            newsletter_vote = self.get_queryset().filter(subscribe__lt=newsletter.target)
-        serialized = NewsletterSerializer(newsletter_vote, many=True)
+        newsletters = self.get_queryset().filter(subscribe__lt=F('target'))
+        serialized = NewsletterSerializer(newsletters, many=True)
+        return Response(status=status.HTTP_200_OK, data=serialized.data)
+
+    @action(detail=False, methods=['GET'])
+    def subscribed_get(self, request):
+        """
+        Regresa los boletines que se pueden subscribir
+        """
+        newsletters = Newsletter.objects.filter(subscribe=F('target'))
+        serialized = NewsletterSerializer(newsletters, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
