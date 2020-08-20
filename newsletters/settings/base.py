@@ -3,7 +3,6 @@ from datetime import timedelta
 from configurations import Configuration
 
 
-
 class Base(Configuration):
     """
      Django settings for newsletters project.
@@ -37,8 +36,8 @@ class Base(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
+        'drf_yasg',
         'corsheaders',
-        'rest_framework_swagger',
         'rest_framework',
         'django.contrib.admin',
         'django.contrib.auth',
@@ -145,7 +144,7 @@ class Base(Configuration):
             'rest_framework_simplejwt.authentication.JWTAuthentication',
         ),
         'DEFAULT_PERMISSION_CLASSES': [
-            'rest_framework.permissions.AllowAny',
+            'rest_framework.permissions.IsAuthenticated',
         ]
     }
 
@@ -171,8 +170,10 @@ class Base(Configuration):
         'JTI_CLAIM': 'jti',
 
         'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-        'SLIDING_TOKEN_LIFETIME': timedelta(minutes=5),
+        'SLIDING_TOKEN_LIFETIME': timedelta(minutes=50),
         'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
     }
+
+    CELERY_BROKER_URL = 'amqp://localhost:5672/'
 
     django_heroku.settings(locals())

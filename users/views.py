@@ -2,12 +2,14 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
 from rest_framework.decorators import action, api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from newslettersapp.serializers import NewsletterSerializer
 from users.models import CustomUser
-from users.serializers import UserSerializer
+from users.tasks import send_mail
+from users.permissions import UserPermissions
+from users.serializers import UserSerializer, UserCreateSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -25,19 +27,19 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [UserPermissions, ]
 
-    def get_permissions(self):
-        permissions = [IsAuthenticated]
-        if self.request.user is not IsAuthenticated and self.request.method == 'POST':
-            # Si el usuario no esta autenticando y el método es un post
-            permissions = [AllowAny]  # Los permisos estarán abiertos
-        return [permission() for permission in permissions]
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return UserCreateSerializer
+        else:
+            return UserSerializer
 
-    def is_active(self, request):  # user/is_active
+    def not_staff(self, request):  # user/is_active
         """
-            Regresa los usuarios inactivos
+            Regresa los usuarios que no son staff
         """
-        users = self.get_queryset().filter(is_active=False)
+        users = self.get_queryset().filter(is_staff=False)
         serialized = UserSerializer(users, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
@@ -70,6 +72,20 @@ class UserViewSet(viewsets.ModelViewSet):
         author = user.author_newsletter.all()
         serialized = NewsletterSerializer(author, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
+
+    @action(detail=False, methods=['POST'])
+    def staff(self, request):
+        """
+        Crea un usuario staff
+        """
+        user_id = request.data.get('user')
+        user = CustomUser.objects.get(id=user_id)
+        if not user.is_staff:
+            send_mail.apply_async(args=['amclres@gmail.com'])
+            user.is_staff = True
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'The user is staff'})
 
 
 @api_view(['POST'])

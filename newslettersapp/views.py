@@ -1,10 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.db.models import F
 
 from newslettersapp.models import Newsletter
+from newslettersapp.permissions import NewsletterPermissions
 from newslettersapp.serializers import NewsletterSerializer, CreateNewsletterSerializer
 from users.models import CustomUser
 
@@ -24,6 +24,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     """
     queryset = Newsletter.objects.all()
     serializer_class = NewsletterSerializer
+    permission_classes = [NewsletterPermissions]
 
     def get_serializer_class(self):
         # retrieve
@@ -31,12 +32,6 @@ class NewsletterViewSet(viewsets.ModelViewSet):
             return CreateNewsletterSerializer
         else:
             return NewsletterSerializer
-
-    def get_permissions(self):
-        permissions = [IsAuthenticated]
-        if self.request.user is not IsAuthenticated and self.request.method == 'GET':
-            permissions = [AllowAny]
-        return [permission() for permission in permissions]
 
     @action(detail=True, methods=['POST'])
     def subscribed(self, request, pk=None):

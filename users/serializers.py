@@ -7,7 +7,7 @@ from sendgrid import Mail, SendGridAPIClient
 from users.models import CustomUser
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'email', 'password', 'token', 'is_active']
@@ -30,3 +30,15 @@ class UserSerializer(serializers.ModelSerializer):
             print(e)
 
         return user
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name']
+
+
+class UserAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['first_name', 'last_name']

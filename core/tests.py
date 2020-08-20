@@ -20,3 +20,5 @@ class TestMyTokenObtainPairView(APITestCase):
         self.assertEqual(response.data['last_name'], '123')
         self.assertEqual(response.data['email'], 'prueba@5.com')
         self.assertEqual(response.data['is_staff'], False)
+        self.assertEqual(response.data['is_admin'], False)
+        self.assertEqual(response.data['id'], 1)
