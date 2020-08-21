@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from newslettersapp.serializers import NewsletterSerializer
 from users.models import CustomUser
-from users.tasks import send_mail
+from users.tasks import send_email
 from users.permissions import UserPermissions
 from users.serializers import UserSerializer, UserCreateSerializer
 
@@ -35,11 +35,12 @@ class UserViewSet(viewsets.ModelViewSet):
         else:
             return UserSerializer
 
-    def not_staff(self, request):  # user/is_active
+    @action(detail=False, methods=['GET'])
+    def no_staff(self, request):
         """
             Regresa los usuarios que no son staff
         """
-        users = self.get_queryset().filter(is_staff=False)
+        users = CustomUser.objects.filter(is_staff=False)
         serialized = UserSerializer(users, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
@@ -76,13 +77,14 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def staff(self, request):
         """
-        Crea un usuario staff
+        Cambia el is_staff a True si el usuario no es staff
         """
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
         if not user.is_staff:
-            send_mail.apply_async(args=['amclres@gmail.com'])
+            send_email.apply_async()
             user.is_staff = True
+            user.save()
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'message': 'The user is staff'})

@@ -23,7 +23,7 @@ class Newsletter(models.Model):
     vote = models.ManyToManyField(CustomUser, related_name='user_newsletter_vote', blank=True)
     subscribed = models.ManyToManyField(CustomUser, related_name='user_newsletter_subscribed', blank=True)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='author_newsletter')
-    created_at = models.DateTimeField(auto_created=timezone.now)
+    created_at = models.DateTimeField(auto_created=timezone.now, auto_now_add=True)
 
     def __str__(self):
         return self.name
