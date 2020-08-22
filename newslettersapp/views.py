@@ -3,6 +3,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import F
 
+from core.pagination import StandardResultsSetPagination
 from newslettersapp.models import Newsletter
 from newslettersapp.permissions import NewsletterPermissions
 from newslettersapp.serializers import NewsletterSerializer, CreateNewsletterSerializer
@@ -25,6 +26,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     queryset = Newsletter.objects.all()
     serializer_class = NewsletterSerializer
     permission_classes = [NewsletterPermissions]
+    pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
         # retrieve

@@ -62,7 +62,7 @@ class TestUserPermissions(APITestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_staff_action(self):
-        user_2 = CustomUser.objects.create(email='usuario_2@123.com')
+        user_2 = CustomUser.objects.create(email='amclres@gmail.com')
         user_2.set_password('1234')
         user_2.save()
         self.user.is_admin = True

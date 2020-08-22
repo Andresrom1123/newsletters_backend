@@ -82,7 +82,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
         if not user.is_staff:
-            send_email.apply_async()
+            send_email.apply_async(args=[user.email])
             user.is_staff = True
             user.save()
             return Response(status=status.HTTP_200_OK)
