@@ -13,15 +13,15 @@ from users.models import CustomUser
 class NewsletterViewSet(viewsets.ModelViewSet):
     """
     retrieve:
-        Regresa un boletin de un usuario de acuerdo al ID mandado.
+        Return a newsletter of a user with the id.
     list:
-        Regresa la lista de boletines en la base de datos.
+        Return the list of newsletter in the bd.
     create:
-        Crea un boletin en la base de datos.
+        Create a newsletter in the bd.
     delete:
-        Elimina un boletin.
+        Delete a newsletter.
     update:
-        Actualiza un boletin.
+        Update a newsletter.
     """
     queryset = Newsletter.objects.all()
     serializer_class = NewsletterSerializer
@@ -38,7 +38,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['POST'])
     def subscribed(self, request, pk=None):
         """
-            Agrega al usuario el boletin que se ha subscribido
+            Add at user the newsletter subscribed
         """
         newsletter = Newsletter.objects.get(id=pk)
         user_id = request.data.get('user')
@@ -53,7 +53,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['POST'])
     def vote(self, request, pk=None):
         """
-            Manda el usuario que ha votado por un boletin
+            Add the user that voted for a newsletter
         """
         newsletter = Newsletter.objects.get(id=pk)
         user_id = request.data.get('user')
@@ -71,7 +71,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def vote_get(self, request):
         """
-        Regresa los boletines que se pueden votar
+            Return a list the newsletters that can vote
         """
         newsletters = self.get_queryset().filter(subscribe__lt=F('target'))
         serialized = NewsletterSerializer(newsletters, many=True)
@@ -80,7 +80,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def subscribed_get(self, request):
         """
-        Regresa los boletines que se pueden subscribir
+            Return the newsletters that can subscribe
         """
         newsletters = Newsletter.objects.filter(subscribe=F('target'))
         serialized = NewsletterSerializer(newsletters, many=True)

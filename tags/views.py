@@ -12,15 +12,15 @@ from tags.serializers import TagSerializer
 class TagViewSet(viewsets.ModelViewSet):
     """
     retrieve:
-        Regresa una instancia de una etiqueta de acuerdo al ID mandado.
+        Return a tag with a id.
     list:
-        Regresa la lista de etiquetas en la base de datos.
+        Return a list of tags in the bd.
     create:
-        Crea una etiqueta en la base de datos.
+        Create a tag in the bd.
     delete:
-        Elimina una etiqueta.
+        Delete a tag.
     update:
-        Actualiza una etiqueta.
+        Update a tag.
     """
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
@@ -29,7 +29,7 @@ class TagViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def newsletters_vote(self, request, slug=None):
         """
-            Regresa los boletines que se pueden votar de un tag por el slug
+            Return the newsletters that can vote of a for the slug.
         """
         tags = Tag.objects.get(slug=slug)  # Regresa un tag en particular por el slug
         newsletters = Newsletter.objects.filter(
@@ -41,7 +41,7 @@ class TagViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def newsletters_subscribed(self, request, slug=None):
         """
-            Regresa los boletines que se pueden votar de un tag por el slug
+            Return the newsletters that can subscribe of a tag for the slug.
         """
         tags = Tag.objects.get(slug=slug)  # Regresa un tag en particular por el slug
         newsletters = Newsletter.objects.filter(

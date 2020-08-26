@@ -15,15 +15,15 @@ from users.serializers import UserSerializer, UserCreateSerializer
 class UserViewSet(viewsets.ModelViewSet):
     """
     retrieve:
-        Regresa una instancia de un usuario de acuerdo al ID mandado.
+        Return a user with the id.
     list:
-        Regresa la lista de usuario en la base de datos.
+        Return the list of user in the bd.
     create:
-        Crea un usuario en la base de datos.
+        Create a user in the bd.
     delete:
-        Elimina un usuario.
+        Delete a user.
     update:
-        Actualiza un libro.
+        Update a user.
     """
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
@@ -38,7 +38,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def no_staff(self, request):
         """
-            Regresa los usuarios que no son staff
+            Return the users that not are staff
         """
         users = CustomUser.objects.filter(is_staff=False)
         serialized = UserSerializer(users, many=True)
@@ -47,7 +47,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def vote(self, request, pk=None):
         """
-        Regresa los boletines que ha votado un usuario
+            Return the newsletters that voted a user
         """
         user = CustomUser.objects.get(id=pk)
         newsletter = user.user_newsletter_vote.all()
@@ -57,7 +57,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def subscribed(self, request, pk=None):
         """
-        Regresa los boletines que se ha subscribido un usuario
+            Return the newsletter that subscribed a user
         """
         user = CustomUser.objects.get(id=pk)
         newsletter = user.user_newsletter_subscribed.all()
@@ -67,7 +67,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['GET'])
     def author(self, request, pk=None):
         """
-        Regresa los boletines de un author
+            Return the newsletter of a author.
         """
         user = CustomUser.objects.get(id=pk)
         author = user.author_newsletter.all()
@@ -77,7 +77,7 @@ class UserViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['POST'])
     def staff(self, request):
         """
-        Cambia el is_staff a True si el usuario no es staff
+            Change is_staff for True if the user is not staff.
         """
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
@@ -95,7 +95,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @csrf_exempt
 def activate_token(request, token):
     """
-    Activa el correo de un usuario
+        Activate the email of a user.
     """
     user = get_object_or_404(CustomUser, token=token)
     user.is_active = True
