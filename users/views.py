@@ -1,3 +1,4 @@
+from django.db.models import F, Q
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets, status
@@ -5,6 +6,7 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
+from newslettersapp.models import Newsletter
 from newslettersapp.serializers import NewsletterSerializer
 from users.models import CustomUser
 from users.tasks import send_email
@@ -50,7 +52,9 @@ class UserViewSet(viewsets.ModelViewSet):
             Return the newsletters that voted a user
         """
         user = CustomUser.objects.get(id=pk)
-        newsletter = user.user_newsletter_vote.all()
+        newsletter = Newsletter.objects.filter(
+            Q(vote=user) & Q(subscribe__lt=F('target'))
+        )
         serialized = NewsletterSerializer(newsletter, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
@@ -60,7 +64,9 @@ class UserViewSet(viewsets.ModelViewSet):
             Return the newsletter that subscribed a user
         """
         user = CustomUser.objects.get(id=pk)
-        newsletter = user.user_newsletter_subscribed.all()
+        newsletter = Newsletter.objects.filter(
+            Q(subscribed=user) & Q(subscribe=F('target'))
+        )
         serialized = NewsletterSerializer(newsletter, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
@@ -82,7 +88,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
         if not user.is_staff:
-            send_email.apply_async(args=[user.email])
+            # send_email.apply_async(args=[user.email])
             user.is_staff = True
             user.save()
             return Response(status=status.HTTP_200_OK)

@@ -8,6 +8,8 @@ from newslettersapp.models import Newsletter
 from newslettersapp.permissions import NewsletterPermissions
 from newslettersapp.serializers import NewsletterSerializer, CreateNewsletterSerializer
 from users.models import CustomUser
+from newslettersapp.tasks import send_email_newsletter
+from users.serializers import UserSerializer
 
 
 class NewsletterViewSet(viewsets.ModelViewSet):
@@ -59,10 +61,16 @@ class NewsletterViewSet(viewsets.ModelViewSet):
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
         if not newsletter.vote.filter(id=user.id).exists() and newsletter.subscribe < newsletter.target:
-            newsletter.subscribe += 1
             newsletter.vote.add(user)
+            newsletter.subscribed.add(user)
+            if (newsletter.target-newsletter.subscribe) == 1:
+                serialized_user = UserSerializer(newsletter.subscribed.all(), many=True)
+                serialized_newsletter = NewsletterSerializer(newsletter)
+                send_email_newsletter.apply_async(args=[serialized_user.data, serialized_newsletter.data])
+            newsletter.subscribe += 1
         elif newsletter.vote.filter(id=user.id).exists():
             newsletter.vote.remove(user)
+            newsletter.subscribed.remove(user)
             if not newsletter.subscribe == newsletter.target:
                 newsletter.subscribe -= 1
         newsletter.save()

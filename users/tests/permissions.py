@@ -19,6 +19,9 @@ class TestUserPermissions(APITestCase):
         self.newsletter = Newsletter.objects.create(
             name='Boletin 1', description='123', image='123', target=0, frequency='Dy', author=self.user,
             created_at=timezone.now(), tag=self.tag)
+        self.newsletter_2 = Newsletter.objects.create(
+            name='Boletin 2', description='123', image='123', target=10, frequency='Dy', author=self.user,
+            created_at=timezone.now(), tag=self.tag)
 
     def test_no_staff_action(self):
         self.user.is_admin = True
@@ -33,7 +36,7 @@ class TestUserPermissions(APITestCase):
         self.assertEqual(response.status_code, 403)
 
     def test_vote_action(self):
-        self.newsletter.vote.add(self.user)
+        self.newsletter_2.vote.add(self.user)
         self.newsletter.save()
         endpoint = f'{self.url_base}v1/users/{self.user.id}/vote/'
         response = self.client.get(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
@@ -54,7 +57,7 @@ class TestUserPermissions(APITestCase):
         endpoint = f'{self.url_base}v1/users/{self.user.id}/author/'
         response = self.client.get(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
 
     def test_author_action_failed(self):
         endpoint = f'{self.url_base}v1/users/{self.user.id}/author/'

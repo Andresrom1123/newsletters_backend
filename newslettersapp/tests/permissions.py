@@ -10,7 +10,7 @@ class TesNewsletterPermissions(APITestCase):
 
     def setUp(self) -> None:
         self.url_base = 'http://127.0.0.1:8000/api/'
-        self.user = CustomUser.objects.create(email='prueba@123.com')
+        self.user = CustomUser.objects.create(email='amclres@gmail.com')
         self.user.set_password('123')
         self.user.is_active = True
         self.user.save()
@@ -19,7 +19,7 @@ class TesNewsletterPermissions(APITestCase):
             name='Boletin 1', description='123', image='123', target=0, frequency='Dy', author=self.user,
             created_at=timezone.now(), tag=self.t)
         self.n_2 = Newsletter.objects.create(
-            name='Boletin 2', description='123', image='123', target=10, frequency='Dy', author=self.user,
+            name='Boletin 2', description='123', image='123', subscribe=9, target=10, frequency='Dy', author=self.user,
             created_at=timezone.now(), tag=self.t)
         self.token = self.client.post(f'{self.url_base}token/', {'email': self.user.email, 'password': '123'})
 
@@ -47,7 +47,7 @@ class TesNewsletterPermissions(APITestCase):
         response = self.client.post(url, data=data, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200, 'Ha ocurrido un error')
         self.n_2.refresh_from_db()
-        self.assertEqual(self.n_2.subscribe, 1)
+        self.assertEqual(self.n_2.subscribe, 10)
 
     def test_vote_action_failed(self):
         url = f'{self.url_base}v1/newsletters/{self.n_2.id}/vote/'
