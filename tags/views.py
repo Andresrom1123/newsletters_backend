@@ -33,19 +33,19 @@ class TagViewSet(viewsets.ModelViewSet):
         """
         tags = Tag.objects.get(slug=slug)  # Regresa un tag en particular por el slug
         newsletters = Newsletter.objects.filter(
-            Q(tag__slug=tags.slug) & Q(subscribe__lt=F('target'))
+            Q(tag__slug=tags.slug) & Q(subscribed__lt=F('target'))
         )  # filtramos los boletines por el tag__slug y los bolotines que el subscribe sea menor al target
         serialized = NewsletterSerializer(newsletters, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
     @action(detail=True, methods=['GET'])
-    def newsletters_subscribed(self, request, slug=None):
+    def newsletters_subscribe(self, request, slug=None):
         """
             Return the newsletters that can subscribe of a tag for the slug.
         """
         tags = Tag.objects.get(slug=slug)  # Regresa un tag en particular por el slug
         newsletters = Newsletter.objects.filter(
-            Q(tag__slug=tags.slug) & Q(subscribe=F('target'))
+            Q(tag__slug=tags.slug) & Q(subscribed=F('target'))
         )  # filtramos los boletines por el tag__slug y los bolotines que el subscribe sea igual al target
         serialized = NewsletterSerializer(newsletters, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)

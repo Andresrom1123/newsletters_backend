@@ -31,65 +31,62 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     pagination_class = StandardResultsSetPagination
 
     def get_serializer_class(self):
-        # retrieve
         if self.action == 'create':
             return CreateNewsletterSerializer
         else:
             return NewsletterSerializer
 
     @action(detail=True, methods=['POST'])
-    def subscribed(self, request, pk=None):
+    def subscribe(self, request, pk=None):
         """
-            Add at user the newsletter subscribed
+            Add at user the newsletter subscribe
         """
         newsletter = Newsletter.objects.get(id=pk)
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
-        if not newsletter.subscribed.filter(id=user.id).exists() and newsletter.subscribe == newsletter.target:
-            newsletter.subscribed.add(user)
-        elif newsletter.subscribed.filter(id=user.id).exists():
-            newsletter.subscribed.remove(user)
+        if not newsletter.users.filter(id=user.id).exists() and newsletter.subscribed == newsletter.target:
+            newsletter.users.add(user)
+        elif newsletter.users.filter(id=user.id).exists():
+            newsletter.users.remove(user)
         newsletter.save()
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=['POST'])
     def vote(self, request, pk=None):
         """
-            Add the user that voted for a newsletter
+            Add the user that vote for a newsletter
         """
         newsletter = Newsletter.objects.get(id=pk)
         user_id = request.data.get('user')
         user = CustomUser.objects.get(id=user_id)
-        if not newsletter.vote.filter(id=user.id).exists() and newsletter.subscribe < newsletter.target:
-            newsletter.vote.add(user)
-            newsletter.subscribed.add(user)
-            if (newsletter.target-newsletter.subscribe) == 1:
-                serialized_user = UserSerializer(newsletter.subscribed.all(), many=True)
+        if not newsletter.users.filter(id=user.id).exists() and newsletter.subscribed < newsletter.target:
+            newsletter.users.add(user)
+            if (newsletter.target-newsletter.subscribed) == 1:
+                serialized_user = UserSerializer(newsletter.users.all(), many=True)
                 serialized_newsletter = NewsletterSerializer(newsletter)
                 send_email_newsletter.apply_async(args=[serialized_user.data, serialized_newsletter.data])
-            newsletter.subscribe += 1
-        elif newsletter.vote.filter(id=user.id).exists():
-            newsletter.vote.remove(user)
-            newsletter.subscribed.remove(user)
-            if not newsletter.subscribe == newsletter.target:
-                newsletter.subscribe -= 1
+            newsletter.subscribed += 1
+        elif newsletter.users.filter(id=user.id).exists():
+            newsletter.users.remove(user)
+            if not newsletter.subscribed == newsletter.target:
+                newsletter.subscribed -= 1
         newsletter.save()
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['GET'])
     def vote_get(self, request):
         """
-            Return a list the newsletters that can vote
+            Return a list the newsletters that can voted
         """
-        newsletters = self.get_queryset().filter(subscribe__lt=F('target'))
+        newsletters = self.get_queryset().filter(subscribed__lt=F('target'))
         serialized = NewsletterSerializer(newsletters, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
     @action(detail=False, methods=['GET'])
-    def subscribed_get(self, request):
+    def subscribe_get(self, request):
         """
-            Return the newsletters that can subscribe
+            Return the newsletters that can subscribed
         """
-        newsletters = Newsletter.objects.filter(subscribe=F('target'))
+        newsletters = Newsletter.objects.filter(subscribed=F('target'))
         serialized = NewsletterSerializer(newsletters, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)

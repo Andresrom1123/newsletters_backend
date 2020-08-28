@@ -7,8 +7,7 @@ from users.serializers import UserSerializer
 
 class NewsletterSerializer(serializers.ModelSerializer):
     tag = TagSerializer(read_only=True)
-    vote = UserSerializer(read_only=True, many=True)
-    subscribed = UserSerializer(read_only=True, many=True)
+    users = UserSerializer(read_only=True, many=True)
     author = UserSerializer(read_only=True)
 
     class Meta:

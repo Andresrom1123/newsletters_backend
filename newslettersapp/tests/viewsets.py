@@ -21,7 +21,7 @@ class TestNewsletterViewSet(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
-    def test_subscribed_get_action(self):
-        url = f'{self.url_base}subscribed_get/'
+    def test_subscribe_get_action(self):
+        url = f'{self.url_base}subscribe_get/'
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)

@@ -47,13 +47,13 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
     @action(detail=True, methods=['GET'])
-    def vote(self, request, pk=None):
+    def voted(self, request, pk=None):
         """
             Return the newsletters that voted a user
         """
         user = CustomUser.objects.get(id=pk)
         newsletter = Newsletter.objects.filter(
-            Q(vote=user) & Q(subscribe__lt=F('target'))
+            Q(users=user) & Q(subscribed__lt=F('target'))
         )
         serialized = NewsletterSerializer(newsletter, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
@@ -65,7 +65,7 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         user = CustomUser.objects.get(id=pk)
         newsletter = Newsletter.objects.filter(
-            Q(subscribed=user) & Q(subscribe=F('target'))
+            Q(users=user) & Q(subscribed=F('target'))
         )
         serialized = NewsletterSerializer(newsletter, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)

@@ -19,20 +19,20 @@ class TesNewsletterPermissions(APITestCase):
             name='Boletin 1', description='123', image='123', target=0, frequency='Dy', author=self.user,
             created_at=timezone.now(), tag=self.t)
         self.n_2 = Newsletter.objects.create(
-            name='Boletin 2', description='123', image='123', subscribe=9, target=10, frequency='Dy', author=self.user,
+            name='Boletin 2', description='123', image='123', subscribed=9, target=10, frequency='Dy', author=self.user,
             created_at=timezone.now(), tag=self.t)
         self.token = self.client.post(f'{self.url_base}token/', {'email': self.user.email, 'password': '123'})
 
-    def test_subscribed_action(self):
-        url = f'{self.url_base}v1/newsletters/{self.n_1.id}/subscribed/'
+    def test_subscribe_action(self):
+        url = f'{self.url_base}v1/newsletters/{self.n_1.id}/subscribe/'
         data = {
             'user': self.user.id
         }
         response = self.client.post(url, data=data, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200, 'Ha ocurrido un error')
 
-    def test_subscribed_action_failed(self):
-        url = f'{self.url_base}v1/newsletters/{self.n_1.id}/subscribed/'
+    def test_subscribe_action_failed(self):
+        url = f'{self.url_base}v1/newsletters/{self.n_1.id}/subscribe/'
         data = {
             'user': self.user.id
         }
@@ -47,7 +47,7 @@ class TesNewsletterPermissions(APITestCase):
         response = self.client.post(url, data=data, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200, 'Ha ocurrido un error')
         self.n_2.refresh_from_db()
-        self.assertEqual(self.n_2.subscribe, 10)
+        self.assertEqual(self.n_2.subscribed, 10)
 
     def test_vote_action_failed(self):
         url = f'{self.url_base}v1/newsletters/{self.n_2.id}/vote/'

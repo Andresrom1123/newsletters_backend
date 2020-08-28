@@ -10,7 +10,7 @@ class UserPermissions(BasePermission):
             return True
         if request.user.is_staff and view.action in ['author']:
             return True
-        if request.user.is_authenticated and view.action in ['vote', 'subscribed']:
+        if request.user.is_authenticated and view.action in ['voted', 'subscribed']:
             return True
 
     def has_object_permission(self, request, view, obj):

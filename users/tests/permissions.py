@@ -35,16 +35,16 @@ class TestUserPermissions(APITestCase):
         response = self.client.get(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 403)
 
-    def test_vote_action(self):
-        self.newsletter_2.vote.add(self.user)
+    def test_voted_action(self):
+        self.newsletter_2.users.add(self.user)
         self.newsletter.save()
-        endpoint = f'{self.url_base}v1/users/{self.user.id}/vote/'
+        endpoint = f'{self.url_base}v1/users/{self.user.id}/voted/'
         response = self.client.get(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
 
     def test_subscribed_action(self):
-        self.newsletter.subscribed.add(self.user)
+        self.newsletter.users.add(self.user)
         self.newsletter.save()
         endpoint = f'{self.url_base}v1/users/{self.user.id}/subscribed/'
         response = self.client.get(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')

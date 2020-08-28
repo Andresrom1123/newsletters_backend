@@ -28,7 +28,7 @@ class TestTagViewSet(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
 
-    def test_newsletters_subscribed_action(self):
-        url = f'{self.url_base}v1/tags/{self.tag.slug}/newsletters_subscribed/'
+    def test_newsletters_subscribe_action(self):
+        url = f'{self.url_base}v1/tags/{self.tag.slug}/newsletters_subscribe/'
         response = self.client.get(url, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200)
