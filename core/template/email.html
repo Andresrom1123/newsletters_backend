@@ -1,23 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>Demystifying Email Design</title>
 </head>
-<body style="margin-left: auto">
-    <div
-            style="background: #03a9f48c; padding: 1rem; width: 500px; height: 200px; border: white solid 1px; border-radius: 10px;"
-    >
-        <h1 style="width: 100%; text-align: center; color: white">
-            Only one step missing
-        </h1>
-        <p style="width: 100%; text-align: center; margin-bottom: 3rem;">
-            Before continuing we need to confirm your email address
-        </p>
-        <a
-                style="margin-left: 12rem; text-decoration: none; color: white; border: white solid 1px; padding: 1rem; background: #00bcd473; border-radius: 10px;"
-                href="http://localhost:3000/signup/{{ token }}">Confirm email
-        </a>
-    </div>
+<body style="margin: 0; padding: 0;">
+    <table align="center"  cellspacing="0" width="600">
+        <tr>
+            <td align="center" style="padding: 2rem 0; font-size: 2rem">
+                Welcome!
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 0 1.5rem; color: #797979; font-size: 1.1rem">
+                We're excited yo have you started. First, you need to confirm you account. Just press the button below.
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 3rem 0 3rem 0; border-bottom: 1px solid #ccbebead">
+                <a
+                    style="text-decoration: none; color: white; border: white solid 1px; padding: 1rem; background: #ffbf00;"
+                    href="http://localhost:3000/signup/{{ token }}"
+                >
+                    Confirm Account
+                 </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="center" style="padding: 15px 0; color: #797979">
+                Andrés Romero Vergara
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

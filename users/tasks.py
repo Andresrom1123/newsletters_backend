@@ -8,7 +8,7 @@ from newsletters.celery import app
 def send_email(email):
     rendered = render_to_string('staff.html')
     msg = EmailMessage(
-        'Newsletter Staff',
+        'Newsletter Admin',
         rendered,
         'Newsletters <from@example.com>',
         [email],
@@ -21,7 +21,7 @@ def send_email(email):
 def send_email_user(email, token):
     rendered = render_to_string('email.html', {'token': token})
     msg = EmailMessage(
-        'Email Confirmation',
+        'Confirm Email',
         rendered,
         'Newsletters <from@example.com>',
         [email],
