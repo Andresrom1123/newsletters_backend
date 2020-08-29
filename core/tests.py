@@ -13,7 +13,7 @@ class TestMyTokenObtainPairView(APITestCase):
         self.user.save()
 
     def test_validate_data_token(self):
-        url = f'{self.url_base}api/token/'
+        url = f'{self.url_base}api/v1/token/'
         response = self.client.post(url, {'email': self.user.email, 'password': '123'})
         self.assertEqual(response.data['first_name'], 'prueba')
         self.assertEqual(response.data['last_name'], '123')

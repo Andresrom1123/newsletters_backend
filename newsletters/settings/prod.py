@@ -1,11 +1,16 @@
+import os
+
 from .base import Base
 
 
 class Prod(Base):
-    DEBUG = True
+    SECRET_KEY = os.getenv('SECRET_KEY')
+
+    DEBUG = os.getenv('DEBUG')
+
     ALLOWED_HOSTS = ['newsletters-app.herokuapp.com']
 
-    CORS_ORIGIN_ALLOW_ALL = True
+    EMAIL_HOST_PASSWORD = os.getenv('SECRET_PASSWORD_HOST')
 
     REST_FRAMEWORK = {
         'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
@@ -17,7 +22,7 @@ class Prod(Base):
         ]
     }
 
-    # CORS_ORIGIN_WHITELIST = [
-    #  'http://localhost:3000',
-    #   'https://awesome-visvesvaraya-2565c3.netlify.app'
-    # ]
+    CORS_ORIGIN_WHITELIST = [
+        'http://localhost:3000',
+        'https://awesome-visvesvaraya-2565c3.netlify.app'
+    ]

@@ -19,11 +19,7 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
-from rest_framework_simplejwt.views import TokenRefreshView
 
-from core.views import MyTokenObtainPairView
-
-from users.views import activate_token
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -44,8 +40,5 @@ urlpatterns = [
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('api/v1/', include('core.urls.v1')),
-    url(r'^api-auth/', include('rest_framework.urls')),
-    path('api/token/', MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('activate/<str:token>', activate_token)
+    url(r'^api-auth/', include('rest_framework.urls'))
 ]

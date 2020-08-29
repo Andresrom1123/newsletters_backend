@@ -76,7 +76,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def vote_get(self, request):
         """
-            Return a list the newsletters that can voted
+            Return a list the newsletters that can vote
         """
         newsletters = self.get_queryset().filter(subscribed__lt=F('target'))
         serialized = NewsletterSerializer(newsletters, many=True)
@@ -85,7 +85,7 @@ class NewsletterViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'])
     def subscribe_get(self, request):
         """
-            Return the newsletters that can subscribed
+            Return the newsletters that can subscribe
         """
         newsletters = Newsletter.objects.filter(subscribed=F('target'))
         serialized = NewsletterSerializer(newsletters, many=True)

@@ -14,7 +14,7 @@ class TestUserPermissions(APITestCase):
         self.user.set_password('123')
         self.user.is_active = True
         self.user.save()
-        self.token = self.client.post(f'{self.url_base}token/', {'email': self.user.email, 'password': '123'})
+        self.token = self.client.post(f'{self.url_base}v1/token/', {'email': self.user.email, 'password': '123'})
         self.tag = Tag.objects.create(name='123', slug='123')
         self.newsletter = Newsletter.objects.create(
             name='Boletin 1', description='123', image='123', target=0, frequency='Dy', author=self.user,

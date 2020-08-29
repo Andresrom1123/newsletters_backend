@@ -20,7 +20,7 @@ class TestTagViewSet(APITestCase):
         self.newsletter_2 = Newsletter.objects.create(
             name='Python2', description='123', image='123', target=1, frequency='Dy', tag=self.tag,
             created_at=timezone.now(), author=self.user)
-        self.token = self.client.post(f'{self.url_base}token/', {'email': self.user.email, 'password': '123'})
+        self.token = self.client.post(f'{self.url_base}v1/token/', {'email': self.user.email, 'password': '123'})
 
     def test_newsletters_vote_action(self):
         url = f'{self.url_base}v1/tags/{self.tag.slug}/newsletters_vote/'

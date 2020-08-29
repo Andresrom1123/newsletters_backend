@@ -10,7 +10,7 @@ class TesNewsletterPermissions(APITestCase):
 
     def setUp(self) -> None:
         self.url_base = 'http://127.0.0.1:8000/api/'
-        self.user = CustomUser.objects.create(email='amclres@gmail.com')
+        self.user = CustomUser.objects.create(email='andres1123540@gmail.com')
         self.user.set_password('123')
         self.user.is_active = True
         self.user.save()
@@ -21,7 +21,7 @@ class TesNewsletterPermissions(APITestCase):
         self.n_2 = Newsletter.objects.create(
             name='Boletin 2', description='123', image='123', subscribed=9, target=10, frequency='Dy', author=self.user,
             created_at=timezone.now(), tag=self.t)
-        self.token = self.client.post(f'{self.url_base}token/', {'email': self.user.email, 'password': '123'})
+        self.token = self.client.post(f'{self.url_base}v1/token/', {'email': self.user.email, 'password': '123'})
 
     def test_subscribe_action(self):
         url = f'{self.url_base}v1/newsletters/{self.n_1.id}/subscribe/'
