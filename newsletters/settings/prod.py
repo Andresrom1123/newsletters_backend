@@ -4,13 +4,7 @@ from .base import Base
 
 
 class Prod(Base):
-    SECRET_KEY = os.getenv('SECRET_KEY')
-
-    DEBUG = os.getenv('DEBUG')
-
     ALLOWED_HOSTS = ['newsletters-app.herokuapp.com']
-
-    EMAIL_HOST_PASSWORD = os.getenv('SECRET_PASSWORD_HOST')
 
     REST_FRAMEWORK = {
         'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',

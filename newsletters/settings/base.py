@@ -16,7 +16,6 @@ class Base(Configuration):
      https://docs.djangoproject.com/en/2.2/ref/settings/
      """
 
-    from decouple import config
     import os
     import django_heroku
 
@@ -27,10 +26,10 @@ class Base(Configuration):
     # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
     # SECURITY WARNING: keep the secret key used in production secret!
-    SECRET_KEY = config('SECRET_KEY')
+    SECRET_KEY = os.getenv('SECRET_KEY')
 
     # SECURITY WARNING: don't run with debug turned on in production!
-    DEBUG = config('DEBUG')
+    DEBUG = os.getenv('DEBUG')
 
     ALLOWED_HOSTS = []
 
@@ -179,7 +178,7 @@ class Base(Configuration):
 
     EMAIL_HOST = 'smtp.gmail.com'
     EMAIL_HOST_USER = 'amclres@gmail.com'
-    EMAIL_HOST_PASSWORD = config('SECRET_PASSWORD_HOST')
+    EMAIL_HOST_PASSWORD = os.getenv('SECRET_PASSWORD_HOST')
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
 
