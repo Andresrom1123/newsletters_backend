@@ -70,11 +70,8 @@ class TestUserPermissions(APITestCase):
         user_2.save()
         self.user.is_admin = True
         self.user.save()
-        endpoint = f'{self.url_base}v1/users/staff/'
-        data = {
-            'user': user_2.id
-        }
-        response = self.client.post(endpoint, data=data, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
+        endpoint = f'{self.url_base}v1/users/{user_2.id}/staff/'
+        response = self.client.post(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(user_2.is_staff, False)
         user_2.refresh_from_db()
@@ -86,9 +83,6 @@ class TestUserPermissions(APITestCase):
         user_2.save()
         self.user.is_admin = True
         self.user.save()
-        endpoint = f'{self.url_base}v1/users/staff/'
-        data = {
-            'user': user_2.id
-        }
-        response = self.client.post(endpoint, data=data, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
+        endpoint = f'{self.url_base}v1/users/{user_2.id}/staff/'
+        response = self.client.post(endpoint, HTTP_AUTHORIZATION=f'Bearer {self.token.data["token"]}')
         self.assertEqual(response.status_code, 400)

@@ -80,13 +80,12 @@ class UserViewSet(viewsets.ModelViewSet):
         serialized = NewsletterSerializer(author, many=True)
         return Response(status=status.HTTP_200_OK, data=serialized.data)
 
-    @action(detail=False, methods=['POST'])
-    def staff(self, request):
+    @action(detail=True, methods=['POST'])
+    def staff(self, request, pk=None):
         """
             Change is_staff for True if the user is not staff.
         """
-        user_id = request.data.get('user')
-        user = CustomUser.objects.get(id=user_id)
+        user = CustomUser.objects.get(id=pk)
         if not user.is_staff:
             send_email.apply_async(args=[user.email])
             user.is_staff = True
