@@ -4,6 +4,10 @@ from .base import Base
 
 
 class Prod(Base):
+    SECRET_KEY = os.getenv('SECRET_KEY')
+
+    DEBUG = os.getenv('DEBUG')
+
     ALLOWED_HOSTS = ['newsletters-app.herokuapp.com']
 
     REST_FRAMEWORK = {
